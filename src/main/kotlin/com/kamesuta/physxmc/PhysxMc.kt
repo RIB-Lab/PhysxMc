@@ -29,10 +29,9 @@ class PhysxMc : JavaPlugin(), Listener {
         val armorStand = physicsWorld.level.spawn(Location(physicsWorld.level, 0.0, 10.0, 0.0), ArmorStand::class.java)
         //armorStand.isInvulnerable = true
         //armorStand.isMarker = true
+        armorStand.isVisible = false
         armorStand.setItem(EquipmentSlot.HEAD, ItemStack(Material.TNT))
-        armorStand.isSmall = true
         armorStand.setGravity(false)
-        armorStand.isGlowing = true
         physicsWorld.addRigidBody(
             BoxRigidBody(
                 PhysicsEntity.ArmorStandEntity(armorStand),

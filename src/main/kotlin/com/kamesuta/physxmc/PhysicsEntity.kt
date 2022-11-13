@@ -42,14 +42,13 @@ sealed class PhysicsEntity(
         override var translation: Vector3dc
             get() = armorStand.location.toVector().toJoml()
             set(value) {
-                armorStand.teleport(armorStand.location.set(value.x(), value.y(), value.z()))
+                val blockCenterHeight = 1.0 - 1.0 / 16
+                armorStand.teleport(armorStand.location.set(value.x(), value.y() - blockCenterHeight, value.z()))
             }
 
         override var rotation: Quaterniondc
-            get() = Quaterniond().rotationXYZ(
-                armorStand.headPose.x,
-                armorStand.headPose.y - armorStand.location.yaw,
-                armorStand.headPose.z
+            get() = Quaterniond().rotationZYX(
+                armorStand.headPose.x, armorStand.headPose.y - armorStand.location.yaw, armorStand.headPose.z
             )
             set(value) {
                 val euler = value.getEulerAnglesZYXRightHanded(Vector3d())

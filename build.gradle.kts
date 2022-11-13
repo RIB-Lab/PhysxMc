@@ -95,6 +95,13 @@ tasks {
         from(includeLib)
     }
 
+    // リソースパックを生成する
+    val resourcepack by registering(Zip::class) {
+        archiveClassifier.set("resourcepack")
+        destinationDirectory.set(layout.buildDirectory.dir("libs"))
+        from("resourcepack")
+    }
+
     // fatJarを生成する
     shadowJar {
         // 依存関係を埋め込んだjarは末尾なし
@@ -118,6 +125,8 @@ tasks {
         add("archives", javadocJar)
         // ソースjarを生成する (-sources)
         add("archives", sourcesJar)
+        // リソースパックを生成する
+        add("archives", resourcepack)
     }
 
     // plugin.ymlの中にバージョンを埋め込む
