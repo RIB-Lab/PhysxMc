@@ -1,6 +1,7 @@
 package com.kamesuta.physxmc
 
 import org.bukkit.World
+import org.bukkit.entity.Entity
 import org.joml.Vector3d
 import org.joml.Vector3i
 
@@ -25,6 +26,12 @@ class PhysicsWorld(val level: World) {
     fun addRigidBody(rigidBody: BoxRigidBody) {
         dynamicsWorld.addActor(rigidBody.actor)
         bodies.add(rigidBody)
+    }
+
+    fun findEntity(entity: Entity): BoxRigidBody? {
+        return bodies.find {
+            it.entity is PhysicsEntity.MobEntity && it.entity.entity == entity
+        }
     }
 
     fun update(diff: Double) {

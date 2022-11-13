@@ -23,7 +23,7 @@ sealed class PhysicsEntity(
         override var translation: Vector3dc
             get() = entity.location.toVector().toJoml()
             set(value) {
-                entity.location.set(value.x(), value.y(), value.z())
+                entity.teleport(entity.location.set(value.x(), value.y(), value.z()))
             }
 
         override var rotation: Quaterniondc
