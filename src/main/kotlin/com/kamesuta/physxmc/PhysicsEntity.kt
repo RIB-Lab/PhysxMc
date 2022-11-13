@@ -1,7 +1,10 @@
 package com.kamesuta.physxmc
 
+import org.bukkit.Particle
 import org.bukkit.block.Block
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
+import org.bukkit.util.EulerAngle
 import org.joml.Quaterniond
 import org.joml.Quaterniondc
 import org.joml.Vector3d
@@ -17,7 +20,7 @@ sealed class PhysicsEntity(
     val oldRotation = Quaterniond()
     open val isDead = false
 
-    class MobEntity(
+    open class MobEntity(
         val entity: Entity,
     ) : PhysicsEntity(physicsGroup = 2) {
         override var translation: Vector3dc
@@ -32,6 +35,32 @@ sealed class PhysicsEntity(
 
         override val isDead: Boolean
             get() = entity.isDead
+    }
+
+    class ArmorStandEntity(
+        val armorStand: ArmorStand,
+    ) : MobEntity(armorStand) {
+        override var translation: Vector3dc
+            get() = armorStand.location.toVector().toJoml()
+            set(value) {
+                armorStand.teleport(armorStand.location.set(value.x(), value.y(), value.z()))
+            }
+
+        override var rotation: Quaterniondc
+            get() = Quaterniond().rotationXYZ(
+                armorStand.headPose.x,
+                armorStand.headPose.y - armorStand.location.yaw,
+                armorStand.headPose.z
+            )
+            set(value) {
+                val euler = value.getEulerAnglesZXY(Vector3d())
+                armorStand.headPose = EulerAngle(euler.x, euler.y, euler.z)
+
+                val location = armorStand.location
+                val direction = value.transform(Vector3d(1.0, 0.0, 0.0)).toBukkit()
+                armorStand.world.spawnParticle(Particle.FLAME, location, 1, 0.0, 0.0, 0.0, 0.0)
+                armorStand.world.spawnParticle(Particle.FLAME, location.clone().add(direction), 1, 0.0, 0.0, 0.0, 0.0)
+            }
     }
 
     class BlockEntity(

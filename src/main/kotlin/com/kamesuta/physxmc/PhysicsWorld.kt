@@ -2,6 +2,7 @@ package com.kamesuta.physxmc
 
 import org.bukkit.World
 import org.bukkit.entity.Entity
+import org.joml.Quaterniond
 import org.joml.Vector3d
 import org.joml.Vector3i
 
@@ -79,6 +80,14 @@ class PhysicsWorld(val level: World) {
                 x.toDouble(),
                 y.toDouble(),
                 z.toDouble(),
+            )
+        }
+        boxRigidBody.actor.globalPose.q.apply {
+            boxRigidBody.entity.rotation = Quaterniond(
+                x.toDouble(),
+                y.toDouble(),
+                z.toDouble(),
+                w.toDouble(),
             )
         }
     }

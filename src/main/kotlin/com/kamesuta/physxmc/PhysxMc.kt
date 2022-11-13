@@ -1,10 +1,13 @@
 package com.kamesuta.physxmc
 
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import physx.common.PxVec3
 import physx.physics.PxRigidDynamic
@@ -26,10 +29,22 @@ class PhysxMc : JavaPlugin(), Listener {
         val armorStand = physicsWorld.level.spawn(Location(physicsWorld.level, 0.0, 10.0, 0.0), ArmorStand::class.java)
         //armorStand.isInvulnerable = true
         //armorStand.isMarker = true
+        armorStand.setItem(EquipmentSlot.HEAD, ItemStack(Material.TNT))
         armorStand.isSmall = true
         armorStand.setGravity(false)
         armorStand.isGlowing = true
-        physicsWorld.addRigidBody(BoxRigidBody(PhysicsEntity.MobEntity(armorStand), 1f, 1f, 1f, 0f, 0f, 0f, true))
+        physicsWorld.addRigidBody(
+            BoxRigidBody(
+                PhysicsEntity.ArmorStandEntity(armorStand),
+                1f,
+                1f,
+                1f,
+                0f,
+                0f,
+                0f,
+                true
+            )
+        )
     }
 
     override fun onDisable() {
