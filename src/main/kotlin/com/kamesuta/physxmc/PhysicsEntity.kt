@@ -1,6 +1,5 @@
 package com.kamesuta.physxmc
 
-import org.bukkit.Particle
 import org.bukkit.block.Block
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
@@ -53,13 +52,8 @@ sealed class PhysicsEntity(
                 armorStand.headPose.z
             )
             set(value) {
-                val euler = value.quaternion2Euler(Vector3d(), RotSeq.zyx)
+                val euler = value.getEulerAnglesZYXRightHanded(Vector3d())
                 armorStand.headPose = EulerAngle(euler.x, -euler.y, -euler.z)
-
-                val location = armorStand.location
-                val direction = value.transform(Vector3d(1.0, 0.0, 0.0)).toBukkit()
-                armorStand.world.spawnParticle(Particle.FLAME, location, 1, 0.0, 0.0, 0.0, 0.0)
-                armorStand.world.spawnParticle(Particle.FLAME, location.clone().add(direction), 1, 0.0, 0.0, 0.0, 0.0)
             }
     }
 
