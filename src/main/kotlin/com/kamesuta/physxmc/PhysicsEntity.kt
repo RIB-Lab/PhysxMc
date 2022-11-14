@@ -42,7 +42,6 @@ sealed class PhysicsEntity(
         override var translation: Vector3dc
             get() = armorStand.location.toVector().toJoml()
             set(value) {
-                val blockCenterHeight = 1.0 - 1.0 / 16
                 armorStand.teleport(armorStand.location.set(value.x(), value.y() - blockCenterHeight, value.z()))
             }
 
@@ -54,6 +53,10 @@ sealed class PhysicsEntity(
                 val euler = value.getEulerAnglesZYXRightHanded(Vector3d())
                 armorStand.headPose = EulerAngle(euler.x, -euler.y, -euler.z)
             }
+
+        companion object {
+            val blockCenterHeight = 1.0 - 1.0 / 16.0
+        }
     }
 
     class BlockEntity(

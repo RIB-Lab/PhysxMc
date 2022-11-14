@@ -1,10 +1,18 @@
 package com.kamesuta.physxmc
 
+import com.kamesuta.physxmc.PhysicsEntity.ArmorStandEntity.Companion.blockCenterHeight
+import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
+import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Vector
 import org.joml.Quaterniond
 import org.joml.Vector3d
 import org.joml.Vector3i
+import physx.common.PxVec3
+import physx.physics.PxRigidDynamic
 
 class PhysicsWorld(val level: World) {
     val dynamicsWorld = DynamicsWorld(level, 0.025F)
@@ -15,6 +23,7 @@ class PhysicsWorld(val level: World) {
     private var blocksChanged = false
     private val loadedChunks = mutableSetOf<Vector3i>()
     private val chunkUpdates = mutableSetOf<Vector3i>()
+    private val entities = mutableListOf<Entity>()
 
     init {
         val floor = BoxRigidBody(
@@ -22,6 +31,28 @@ class PhysicsWorld(val level: World) {
             100f, 1f, 100f, 0f, 0f, 0f, false,
         )
         addRigidBody(floor)
+    }
+
+    fun addBoxEntity(location: Location, itemStack: ItemStack): ArmorStand {
+        val armorStand =
+            location.world.spawn(location.clone().add(0.0, -blockCenterHeight, 0.0), ArmorStand::class.java)
+        //armorStand.isInvulnerable = true
+        //armorStand.isMarker = true
+        armorStand.isVisible = false
+        armorStand.setGravity(false)
+        addRigidBody(
+            BoxRigidBody(
+                PhysicsEntity.ArmorStandEntity(armorStand),
+                1f, 1f, 1f,
+                0f, 0f, 0f,
+                true
+            )
+        )
+        entities.add(armorStand)
+
+        armorStand.setItem(EquipmentSlot.HEAD, itemStack)
+
+        return armorStand
     }
 
     fun addRigidBody(rigidBody: BoxRigidBody) {
@@ -33,6 +64,17 @@ class PhysicsWorld(val level: World) {
         return bodies.find {
             it.entity is PhysicsEntity.MobEntity && it.entity.entity == entity
         }
+    }
+
+    fun addForce(entity: Entity, force: Vector) {
+        val rigidBody = findEntity(entity)
+            ?: return
+        val rigidDynamic = rigidBody.actor as? PxRigidDynamic
+            ?: return
+        // 力を加える
+        val pxForce = PxVec3(force.x.toFloat(), force.y.toFloat(), force.z.toFloat())
+        rigidDynamic.addForce(pxForce)
+        pxForce.destroy()
     }
 
     fun update(diff: Double) {
@@ -70,6 +112,7 @@ class PhysicsWorld(val level: World) {
             body.destroy()
         }
         bodies.clear()
+        entities.forEach { it.remove() }
 
         dynamicsWorld.destroy()
     }

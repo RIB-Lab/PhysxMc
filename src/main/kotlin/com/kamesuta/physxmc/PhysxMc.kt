@@ -1,16 +1,15 @@
 package com.kamesuta.physxmc
 
-import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
+import org.bukkit.entity.HumanEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import physx.common.PxVec3
-import physx.physics.PxRigidDynamic
 
 class PhysxMc : JavaPlugin(), Listener {
     lateinit var physicsWorld: PhysicsWorld
@@ -25,25 +24,6 @@ class PhysxMc : JavaPlugin(), Listener {
 
         server.pluginManager.registerEvents(this, this)
         server.scheduler.runTaskTimer(this, this::tick, 0, 0)
-
-        val armorStand = physicsWorld.level.spawn(Location(physicsWorld.level, 0.0, 10.0, 0.0), ArmorStand::class.java)
-        //armorStand.isInvulnerable = true
-        //armorStand.isMarker = true
-        armorStand.isVisible = false
-        armorStand.setItem(EquipmentSlot.HEAD, ItemStack(Material.TNT))
-        armorStand.setGravity(false)
-        physicsWorld.addRigidBody(
-            BoxRigidBody(
-                PhysicsEntity.ArmorStandEntity(armorStand),
-                1f,
-                1f,
-                1f,
-                0f,
-                0f,
-                0f,
-                true
-            )
-        )
     }
 
     override fun onDisable() {
@@ -62,19 +42,31 @@ class PhysxMc : JavaPlugin(), Listener {
 
     @EventHandler
     fun onDamage(event: EntityDamageByEntityEvent) {
-        val damager = event.damager.location
-        val armorStand = event.entity as? ArmorStand
+        val player = event.damager as? HumanEntity
             ?: return
-        val rigidBody = physicsWorld.findEntity(armorStand)
-            ?: return
-        val rigidDynamic = rigidBody.actor as? PxRigidDynamic
-            ?: return
+        if (player.inventory.itemInOffHand.type != Material.STICK) return
         // キャンセル
         event.isCancelled = true
-        // 力を加える
-        val force = damager.direction.clone().multiply(100)
-        val pxForce = PxVec3(force.x.toFloat(), force.y.toFloat(), force.z.toFloat())
-        rigidDynamic.addForce(pxForce)
-        pxForce.destroy()
+
+        val armorStand = event.entity as? ArmorStand
+            ?: return
+
+        val force = player.eyeLocation.direction.clone().multiply(100)
+        physicsWorld.addForce(armorStand, force)
+    }
+
+    @EventHandler
+    fun onPlayerRightClick(event: PlayerInteractEvent) {
+        if (event.hand != EquipmentSlot.HAND) return
+        if (event.action != Action.RIGHT_CLICK_BLOCK && event.action != Action.RIGHT_CLICK_AIR) return
+
+        val player = event.player
+        if (player.inventory.itemInOffHand.type != Material.STICK) return
+        if (player.inventory.itemInMainHand.type.isAir || !player.inventory.itemInMainHand.type.isBlock) return
+
+        val spawnLocation = player.eyeLocation.clone().add(player.eyeLocation.direction)
+        val boxEntity = physicsWorld.addBoxEntity(spawnLocation, player.inventory.itemInMainHand)
+        val force = player.eyeLocation.direction.clone().multiply(100)
+        physicsWorld.addForce(boxEntity, force)
     }
 }
