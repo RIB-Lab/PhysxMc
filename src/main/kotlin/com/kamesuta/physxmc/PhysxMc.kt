@@ -44,7 +44,7 @@ class PhysxMc : JavaPlugin(), Listener {
     fun onDamage(event: EntityDamageByEntityEvent) {
         val player = event.damager as? HumanEntity
             ?: return
-        if (player.inventory.itemInOffHand.type != Material.STICK) return
+        if (player.inventory.itemInOffHand.type != Material.STICK && player.inventory.itemInOffHand.type != Material.BLAZE_ROD) return
         // キャンセル
         event.isCancelled = true
 
@@ -58,15 +58,20 @@ class PhysxMc : JavaPlugin(), Listener {
     @EventHandler
     fun onPlayerRightClick(event: PlayerInteractEvent) {
         if (event.hand != EquipmentSlot.HAND) return
-        if (event.action != Action.RIGHT_CLICK_BLOCK && event.action != Action.RIGHT_CLICK_AIR) return
-
         val player = event.player
-        if (player.inventory.itemInOffHand.type != Material.STICK) return
+        if (player.inventory.itemInOffHand.type != Material.STICK && player.inventory.itemInOffHand.type != Material.BLAZE_ROD) return
+        // キャンセル
+        event.isCancelled = true
+
+        if (event.action != Action.RIGHT_CLICK_BLOCK && event.action != Action.RIGHT_CLICK_AIR) return
         if (player.inventory.itemInMainHand.type.isAir || !player.inventory.itemInMainHand.type.isBlock) return
 
         val spawnLocation = player.eyeLocation.clone().add(player.eyeLocation.direction)
         val boxEntity = physicsWorld.addBoxEntity(spawnLocation, player.inventory.itemInMainHand)
-        val force = player.eyeLocation.direction.clone().multiply(100)
-        physicsWorld.addForce(boxEntity, force)
+
+        if (player.inventory.itemInOffHand.type == Material.STICK) {
+            val force = player.eyeLocation.direction.clone().multiply(100)
+            physicsWorld.addForce(boxEntity, force)
+        }
     }
 }

@@ -89,8 +89,9 @@ class BoxRigidBody(
                 e.addSuppressed(it)
             }
             throw e
+        } finally {
+            mem.forEach { it() }
         }
-        mem.forEach { it() }
     }
 
     fun destroy() {
