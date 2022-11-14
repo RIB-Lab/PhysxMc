@@ -3,3 +3,5 @@ version: '${version}'
 main: com.kamesuta.physxmc.PhysxMc
 api-version: 1.16
 authors: [ Kamesuta ]
+depend:
+  - ProtocolLib

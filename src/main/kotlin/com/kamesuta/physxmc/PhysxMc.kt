@@ -1,5 +1,7 @@
 package com.kamesuta.physxmc
 
+import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.ProtocolManager
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.HumanEntity
@@ -17,9 +19,14 @@ class PhysxMc : JavaPlugin(), Listener {
     /** 物理演算ワールド */
     lateinit var physicsWorld: PhysicsWorld
 
+    /** ProtocolManagerインスタンス */
+    lateinit var protocolManager: ProtocolManager
+
     override fun onEnable() {
         // プラグインインスタンスをstaticフィールドに保存
         instance = this
+        // ProtocolLibを初期化
+        protocolManager = ProtocolLibrary.getProtocolManager()
 
         // Plugin startup logic
         PhysxLoader.loadPhysxOnAppClassloader()

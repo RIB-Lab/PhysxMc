@@ -42,6 +42,8 @@ repositories {
     // Paperの依存リポジトリ
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://oss.sonatype.org/content/groups/public/")
+    // ProtocolLibの依存リポジトリ
+    maven("https://repo.dmulloy2.net/repository/public/")
 }
 
 configurations {
@@ -53,13 +55,13 @@ configurations {
 dependencies {
     // PaperAPI
     compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
+    // ProtocolLib
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.6.0")
 
-    // IncludeLib
+    // PhysX
     val includeLib by configurations
-
     // java bindings
     includeLib("de.fabmax:physx-jni:1.1.0")
-
     // native libraries, you can add the one matching your system or all
     includeLib("de.fabmax:physx-jni:1.1.0:natives-windows")
     includeLib("de.fabmax:physx-jni:1.1.0:natives-linux")
