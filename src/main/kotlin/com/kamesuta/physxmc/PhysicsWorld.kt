@@ -103,8 +103,6 @@ class PhysicsWorld(val level: World) {
                 if (!it.isKinematicOrFrozen) {
                     updateTransformations(it, updateDiff.toDouble())
                     if (it.entity.isDead) {
-                        dynamicsWorld.removeActor(it.actor)
-                        it.destroy()
                         return@removeIf true
                     }
                 }
@@ -153,8 +151,6 @@ class PhysicsWorld(val level: World) {
     }
 
     private fun physicsUpdate(diff: Double) {
-        checkChunksToUnload()
-
         for (body in bodies) {
             if (!body.isKinematicOrFrozen && !body.isDestroyed) {
                 body.updatePhysics(diff, blocksChanged)
@@ -162,6 +158,7 @@ class PhysicsWorld(val level: World) {
         }
 
         blocksChanged = false
+        checkChunksToUnload()
         checkLoadedChunks()
         loadedChunkEntitiesChanged = false
     }
