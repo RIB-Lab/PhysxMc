@@ -59,13 +59,7 @@ sealed class PhysicsEntity(
         }
     }
 
-    class BlockEntity(
-        val block: Block,
-    ) : PhysicsEntity(physicsGroup = 1) {
-        override var translation: Vector3dc
-            get() = block.location.toVector().toJoml()
-            set(value) {
-                block.location.set(value.x(), value.y(), value.z())
-            }
+    class BlockEntity: PhysicsEntity(physicsGroup = 1) {
+        override var translation: Vector3dc = Vector3d()
     }
 }

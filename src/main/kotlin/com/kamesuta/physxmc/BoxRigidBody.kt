@@ -1,6 +1,8 @@
 package com.kamesuta.physxmc
 
+import org.joml.RoundingMode
 import org.joml.Vector3d
+import org.joml.Vector3i
 import physx.common.PxQuat
 import physx.common.PxTransform
 import physx.common.PxVec3
@@ -18,11 +20,14 @@ class BoxRigidBody(
     val offsety: Float,
     val offsetz: Float,
     val dynamic: Boolean,
+    val physics: PhysicsWorld,
 ) {
     val shape: PxShape
     val actor: PxRigidActor
     var isDestroyed = false
         private set
+    private val tmpPos = Vector3i()
+    private var lastChunk: Vector3i? = null
 
     val isKinematicOrFrozen
         get() = actor.actorFlags.isSet(PxActorFlagEnum.eDISABLE_SIMULATION)
@@ -100,6 +105,31 @@ class BoxRigidBody(
             actor.release()
         }
         isDestroyed = true
+    }
+
+    private fun loadChunkPhysics(x: Float, y: Float, z: Float) {
+        val offset: Vector3d = this.physics.offset
+        this.tmpPos.set(Vector3i(x + offset.x, y + offset.y, z + offset.z, RoundingMode.FLOOR))
+        if ((this.tmpPos != Vector3i(entity.translation, RoundingMode.FLOOR)) && !this.isKinematicOrFrozen) {
+            val cx: Int = this.tmpPos.x shr PhysicsWorld.CHUNK_SIZE_NUM_BITS
+            val cy: Int = this.tmpPos.y shr PhysicsWorld.CHUNK_SIZE_NUM_BITS
+            val cz: Int = this.tmpPos.z shr PhysicsWorld.CHUNK_SIZE_NUM_BITS
+
+            var lastChunk1 = lastChunk
+            if (lastChunk1 == null || !lastChunk1.equals(cx, cy, cz)) {
+                if (lastChunk1 == null) {
+                    lastChunk1 = Vector3i(cx, cy, cz).also { lastChunk = it }
+                } else {
+                    physics.removeLoadedChunkEntity(lastChunk1)
+                    lastChunk1.set(cx, cy, cz)
+                }
+                physics.addLoadedChunkEntity(lastChunk1)
+            }
+        }
+    }
+
+    fun updatePhysics(diff: Double, blocksChanged: Boolean) {
+        loadChunkPhysics(actor.globalPose.p.x, actor.globalPose.p.y, actor.globalPose.p.z)
     }
 
     companion object {

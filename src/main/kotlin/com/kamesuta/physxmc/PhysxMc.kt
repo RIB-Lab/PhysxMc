@@ -6,6 +6,9 @@ import org.bukkit.entity.HumanEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockEvent
+import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -73,5 +76,15 @@ class PhysxMc : JavaPlugin(), Listener {
             val force = player.eyeLocation.direction.clone().multiply(100)
             physicsWorld.addForce(boxEntity, force)
         }
+    }
+
+    @EventHandler
+    fun onBlockChanged(event: BlockPlaceEvent) {
+        physicsWorld.blockUpdate(event.block)
+    }
+
+    @EventHandler
+    fun onBlockChanged(event: BlockBreakEvent) {
+        physicsWorld.blockUpdate(event.block)
     }
 }
