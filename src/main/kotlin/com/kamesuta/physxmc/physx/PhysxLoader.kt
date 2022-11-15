@@ -1,4 +1,4 @@
-package com.kamesuta.physxmc
+package com.kamesuta.physxmc.physx
 
 import java.io.File
 import java.net.URL
@@ -38,7 +38,7 @@ object PhysxLoader {
      */
     private fun copyLibsFromResources(forceCopy: Boolean): File {
         val tempLibDir =
-            File(System.getProperty("java.io.tmpdir"), "de.fabmax.physx-jni${File.separator}${physxJniVersion}")
+            File(System.getProperty("java.io.tmpdir"), "de.fabmax.physx-jni${File.separator}$physxJniVersion")
         check(!(tempLibDir.exists() && !tempLibDir.isDirectory || !tempLibDir.exists() && !tempLibDir.mkdirs())) { "Failed creating native lib dir $tempLibDir" }
 
         // 1st: make sure all libs are available in system temp dir

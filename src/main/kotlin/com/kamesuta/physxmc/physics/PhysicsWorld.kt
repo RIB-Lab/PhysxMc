@@ -1,6 +1,6 @@
-package com.kamesuta.physxmc
+package com.kamesuta.physxmc.physics
 
-import com.kamesuta.physxmc.PhysicsEntity.ArmorStandEntity.Companion.blockCenterHeight
+import com.kamesuta.physxmc.physics.PhysicsEntity.ArmorStandEntity.Companion.blockCenterHeight
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.block.Block

@@ -1,5 +1,7 @@
-package com.kamesuta.physxmc
+package com.kamesuta.physxmc.physics
 
+import com.kamesuta.physxmc.ConfigClient
+import com.kamesuta.physxmc.physx.Physx
 import org.bukkit.World
 import org.joml.Vector3f
 import physx.PxTopLevelFunctions

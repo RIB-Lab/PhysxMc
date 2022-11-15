@@ -1,5 +1,7 @@
-package com.kamesuta.physxmc
+package com.kamesuta.physxmc.physics
 
+import com.kamesuta.physxmc.getEulerAnglesZYXRightHanded
+import com.kamesuta.physxmc.toJoml
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.util.EulerAngle

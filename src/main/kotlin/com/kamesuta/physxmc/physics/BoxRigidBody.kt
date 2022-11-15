@@ -1,5 +1,6 @@
-package com.kamesuta.physxmc
+package com.kamesuta.physxmc.physics
 
+import com.kamesuta.physxmc.physx.Physx
 import org.joml.RoundingMode
 import org.joml.Vector3d
 import org.joml.Vector3i

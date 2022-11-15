@@ -6,6 +6,9 @@ import com.comphenix.protocol.ProtocolManager
 import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
+import com.kamesuta.physxmc.physics.PhysicsWorld
+import com.kamesuta.physxmc.physx.Physx
+import com.kamesuta.physxmc.physx.PhysxLoader
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.HumanEntity

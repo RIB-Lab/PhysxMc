@@ -1,5 +1,6 @@
-package com.kamesuta.physxmc
+package com.kamesuta.physxmc.physx
 
+import com.kamesuta.physxmc.PhysxMc
 import physx.PxTopLevelFunctions
 import physx.common.JavaErrorCallback
 import physx.common.PxErrorCallback
