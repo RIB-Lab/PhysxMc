@@ -1,15 +1,17 @@
 package com.kamesuta.physxmc
 
+import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
+import com.comphenix.protocol.events.ListenerPriority
+import com.comphenix.protocol.events.PacketAdapter
+import com.comphenix.protocol.events.PacketEvent
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.HumanEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
-import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -37,6 +39,22 @@ class PhysxMc : JavaPlugin(), Listener {
 
         server.pluginManager.registerEvents(this, this)
         server.scheduler.runTaskTimer(this, this::tick, 0, 0)
+
+        // ブロック変更時
+        protocolManager.addPacketListener(object : PacketAdapter(
+            this,
+            ListenerPriority.NORMAL,
+            listOf(
+                PacketType.Play.Server.BLOCK_CHANGE,
+            ),
+        ) {
+            /** 送信 (サーバー→クライアント) */
+            override fun onPacketSending(event: PacketEvent) {
+                val packet = event.packet
+                val pos = packet.blockPositionModifier.read(0)
+                physicsWorld.blockUpdate(event.player.world.getBlockAt(pos.x, pos.y, pos.z))
+            }
+        })
     }
 
     override fun onDisable() {
@@ -86,16 +104,6 @@ class PhysxMc : JavaPlugin(), Listener {
             val force = player.eyeLocation.direction.clone().multiply(100)
             physicsWorld.addForce(boxEntity, force)
         }
-    }
-
-    @EventHandler
-    fun onBlockChanged(event: BlockPlaceEvent) {
-        physicsWorld.blockUpdate(event.block)
-    }
-
-    @EventHandler
-    fun onBlockChanged(event: BlockBreakEvent) {
-        physicsWorld.blockUpdate(event.block)
     }
 
     companion object {
