@@ -101,10 +101,10 @@ class PhysicsWorld(val level: World) {
             bodies.removeIf {
                 if (it.isDestroyed) return@removeIf true
                 if (!it.isKinematicOrFrozen) {
+                    if (it.entity.isDead) return@removeIf true
+                    if (it.actor !is PxRigidDynamic) return@removeIf false
+                    if (it.actor.isSleeping) return@removeIf false
                     updateTransformations(it, updateDiff.toDouble())
-                    if (it.entity.isDead) {
-                        return@removeIf true
-                    }
                 }
                 return@removeIf false
             }
