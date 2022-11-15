@@ -46,7 +46,11 @@ class PhysicsWorld(val level: World) {
         armorStand.setGravity(false)
         addRigidBody(
             BoxRigidBody(
-                PhysicsEntity.ArmorStandEntity(armorStand),
+                PhysicsEntity.ArmorStandEntity(armorStand).apply {
+                    rotation = Quaterniond().rotationZYX(
+                        -Math.toRadians(location.pitch).toDouble(), Math.toRadians(location.yaw).toDouble(), 0.0
+                    )
+                },
                 1f, 1f, 1f,
                 0f, 0f, 0f,
                 true, this,
