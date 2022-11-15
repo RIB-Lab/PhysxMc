@@ -1,7 +1,7 @@
 package com.kamesuta.physxmc
 
 import physx.PxTopLevelFunctions
-import physx.common.PxDefaultErrorCallback
+import physx.common.JavaErrorCallback
 import physx.common.PxErrorCallback
 import physx.common.PxFoundation
 import physx.common.PxTolerancesScale
@@ -15,18 +15,22 @@ import physx.physics.PxPhysics
 class Physx private constructor() {
     val allocator: PxDefaultAllocator
     val errorCb: PxErrorCallback
-    val physics: PxPhysics
+    val foundation: PxFoundation
     val tolerances: PxTolerancesScale
+    val physics: PxPhysics
+    val cookingParams: PxCookingParams
     val cooking: PxCooking
     val defaultMaterial: PxMaterial
-    val foundation: PxFoundation
-    val cookingParams: PxCookingParams
 
     /** 初期化 */
     init {
         val version = PxTopLevelFunctions.getPHYSICS_VERSION()
         allocator = PxDefaultAllocator()
-        errorCb = PxDefaultErrorCallback()
+        errorCb = object : JavaErrorCallback() {
+            override fun reportError(code: Int, message: String?, file: String?, line: Int) {
+                PhysxMc.instance.logger.severe("PhysX Error: code=$code, message=$message, file=$file, line=$line")
+            }
+        }
         foundation = PxTopLevelFunctions.CreateFoundation(version, allocator, errorCb)
         tolerances = PxTolerancesScale()
         physics = PxTopLevelFunctions.CreatePhysics(version, foundation, tolerances)

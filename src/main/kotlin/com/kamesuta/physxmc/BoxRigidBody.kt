@@ -89,14 +89,13 @@ class BoxRigidBody(
             actor = box
         } catch (e: Throwable) {
             runCatching {
-                mem.forEach { it() }
+                mem.asReversed().forEach { it() }
             }.onFailure {
                 e.addSuppressed(it)
             }
             throw e
-        } finally {
-            mem.forEach { it() }
         }
+        mem.asReversed().forEach { it() }
     }
 
     fun destroy() {
