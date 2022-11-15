@@ -32,7 +32,10 @@ class PhysicsWorld(val level: World) {
 
     fun addBoxEntity(location: Location, itemStack: ItemStack): ArmorStand {
         val armorStand =
-            location.world.spawn(location.clone().add(0.0, -blockCenterHeight, 0.0), ArmorStand::class.java)
+            location.world.spawn(
+                location.clone().apply { y -= blockCenterHeight; yaw = 0f; pitch = 0f },
+                ArmorStand::class.java
+            )
         //armorStand.isInvulnerable = true
         //armorStand.isMarker = true
         armorStand.isVisible = false

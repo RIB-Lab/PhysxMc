@@ -1,6 +1,5 @@
 package com.kamesuta.physxmc
 
-import org.bukkit.block.Block
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.util.EulerAngle
@@ -42,12 +41,15 @@ sealed class PhysicsEntity(
         override var translation: Vector3dc
             get() = armorStand.location.toVector().toJoml()
             set(value) {
-                armorStand.teleport(armorStand.location.set(value.x(), value.y() - blockCenterHeight, value.z()))
+                armorStand.teleport(armorStand.location
+                    .set(value.x(), value.y() - blockCenterHeight, value.z())
+                    .apply { yaw = 0f; pitch = 0f }
+                )
             }
 
         override var rotation: Quaterniondc
             get() = Quaterniond().rotationZYX(
-                armorStand.headPose.x, armorStand.headPose.y - armorStand.location.yaw, armorStand.headPose.z
+                armorStand.headPose.x, armorStand.headPose.y, armorStand.headPose.z
             )
             set(value) {
                 val euler = value.getEulerAnglesZYXRightHanded(Vector3d())
@@ -55,11 +57,11 @@ sealed class PhysicsEntity(
             }
 
         companion object {
-            val blockCenterHeight = 1.0 - 1.0 / 16.0
+            val blockCenterHeight = 1.5 - 1.0 / 16.0
         }
     }
 
-    class BlockEntity: PhysicsEntity(physicsGroup = 1) {
+    class BlockEntity : PhysicsEntity(physicsGroup = 1) {
         override var translation: Vector3dc = Vector3d()
     }
 }
