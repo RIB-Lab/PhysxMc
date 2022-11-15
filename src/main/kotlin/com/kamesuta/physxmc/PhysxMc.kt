@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityExplodeEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.java.JavaPlugin
@@ -44,15 +45,32 @@ class PhysxMc : JavaPlugin(), Listener {
         protocolManager.addPacketListener(object : PacketAdapter(
             this,
             ListenerPriority.NORMAL,
-            listOf(
-                PacketType.Play.Server.BLOCK_CHANGE,
-            ),
+            PacketType.Play.Server.BLOCK_CHANGE,
         ) {
             /** 送信 (サーバー→クライアント) */
             override fun onPacketSending(event: PacketEvent) {
                 val packet = event.packet
                 val pos = packet.blockPositionModifier.read(0)
                 physicsWorld.blockUpdate(event.player.world.getBlockAt(pos.x, pos.y, pos.z))
+            }
+        })
+        protocolManager.addPacketListener(object : PacketAdapter(
+            this,
+            ListenerPriority.NORMAL,
+            PacketType.Play.Server.MULTI_BLOCK_CHANGE,
+        ) {
+            /** 送信 (サーバー→クライアント) */
+            override fun onPacketSending(event: PacketEvent) {
+                val packet = event.packet
+                val chunk = packet.sectionPositions.read(0)
+                val changePositions = packet.shortArrays.read(0)
+                for (changePosition in changePositions) {
+                    val pos = changePosition.toInt()
+                    val x = (chunk.x shl 4) + (pos shr 8 and 0xF)
+                    val y = (chunk.y shl 4) + (pos shr 0 and 0xF)
+                    val z = (chunk.z shl 4) + (pos shr 4 and 0xF)
+                    physicsWorld.blockUpdate(event.player.world.getBlockAt(x, y, z))
+                }
             }
         })
     }
