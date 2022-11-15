@@ -124,6 +124,11 @@ class PhysxMc : JavaPlugin(), Listener {
         }
     }
 
+    @EventHandler
+    fun onExplosion(event: EntityExplodeEvent) {
+        physicsWorld.applyExplosion(PhysicsWorld.Explosion(event.location.toVector().toJoml(), 6.9f))
+    }
+
     companion object {
         /** プラグインインスタンス */
         lateinit var instance: PhysxMc

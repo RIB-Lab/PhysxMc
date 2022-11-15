@@ -10,10 +10,13 @@ import org.bukkit.entity.Entity
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import org.joml.Math
 import org.joml.Quaterniond
 import org.joml.Vector3d
 import org.joml.Vector3i
 import physx.common.PxVec3
+import physx.physics.PxForceModeEnum
+import physx.physics.PxRigidBody
 import physx.physics.PxRigidDynamic
 
 class PhysicsWorld(val level: World) {
@@ -23,6 +26,7 @@ class PhysicsWorld(val level: World) {
     private var lastEntityUpdates = mutableSetOf<BoxRigidBody>()
     private val chunkBodies = mutableMapOf<Vector3i, MutableList<BoxRigidBody>>()
     private var blocksChanged = false
+    private val explosions = mutableListOf<Explosion>()
     private val loadedChunks = mutableSetOf<Vector3i>()
     private val chunkUpdates = mutableSetOf<Vector3i>()
     private val entities = mutableListOf<Entity>()
@@ -100,6 +104,15 @@ class PhysicsWorld(val level: World) {
                         return@removeIf true
                     }
                 }
+                return@removeIf false
+            }
+
+            explosions.removeIf {
+                if (it.tickDelay == 0) {
+                    executeExplosion(it)
+                    return@removeIf true
+                }
+                it.tickDelay--
                 return@removeIf false
             }
         }
@@ -312,6 +325,42 @@ class PhysicsWorld(val level: World) {
             return !(boundingBox.minX == 0.0 && boundingBox.minY == 0.0 && boundingBox.minZ == 0.0
                     && boundingBox.maxX == 1.0 && boundingBox.maxY == 1.0 && boundingBox.maxZ == 1.0)
         }
+
+    fun applyExplosion(explosion: Explosion) {
+        explosions.add(explosion)
+    }
+
+    private fun executeExplosion(explosion: Explosion) {
+        val tmp = Vector3d()
+        val explosionStrengthSquared = explosion.strength * 2.0 * explosion.strength * 2.0
+
+        for (body in this.bodies) {
+            tmp.set(body.entity.translation).add(offset)
+            val distanceSquared = explosion.position.distanceSquared(tmp)
+            if (distanceSquared <= explosionStrengthSquared) {
+                val distance = Math.sqrt(distanceSquared)
+                val direction = tmp.sub(explosion.position).normalize()
+                direction.y += 2.0
+                direction.normalize()
+                val realStrength = (1.0 - (distance / (explosion.strength * 2.0)).coerceIn(0.0..1.0)) * 15.0
+                if (body.actor is PxRigidBody) {
+                    val pxVec = PxVec3(
+                        (direction.x * realStrength).toFloat(),
+                        (direction.y * realStrength).toFloat(),
+                        (direction.z * realStrength).toFloat()
+                    )
+                    body.actor.addForce(pxVec, PxForceModeEnum.eVELOCITY_CHANGE)
+                    pxVec.destroy()
+                }
+            }
+        }
+    }
+
+    data class Explosion(
+        val position: Vector3d,
+        val strength: Float = 0f,
+        var tickDelay: Int = 2,
+    )
 
     companion object {
         val CHUNK_SIZE_NUM_BITS = Integer.bitCount(3)
