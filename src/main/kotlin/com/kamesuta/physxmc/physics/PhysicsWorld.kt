@@ -34,7 +34,7 @@ class PhysicsWorld(val level: World) {
     private val loadedChunkEntities = mutableMapOf<Vector3i, Int>()
     private var loadedChunkEntitiesChanged = false
 
-    fun addBoxEntity(location: Location, itemStack: ItemStack): ArmorStand {
+    fun addBoxEntity(location: Location, itemStack: ItemStack, size: Float = 1f): ArmorStand {
         val armorStand =
             location.world.spawn(
                 location.clone().apply { y -= blockCenterHeight; yaw = 0f; pitch = 0f },
@@ -51,7 +51,7 @@ class PhysicsWorld(val level: World) {
                         -Math.toRadians(location.pitch).toDouble(), Math.toRadians(location.yaw).toDouble(), 0.0
                     )
                 },
-                1f, 1f, 1f,
+                size, size, size,
                 0f, 0f, 0f,
                 true, this,
             )

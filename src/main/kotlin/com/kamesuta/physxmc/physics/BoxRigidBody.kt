@@ -68,10 +68,9 @@ class BoxRigidBody(
             val boxShape: PxShape =
                 Physx.instance.physics.createShape(boxGeometry, Physx.instance.defaultMaterial, true, shapeFlags)
             if (offsetx != 0.0f || offsety != 0.0f || offsetz != 0.0f) {
-                boxShape.localPose = PxTransform(
-                    PxVec3(offsetx, offsety, offsetz),
-                    PxQuat(0.0f, 0.0f, 0.0f, 1.0f)
-                ).also { mem.add { it.destroy() } }
+                val pxOffset = PxVec3(offsetx, offsety, offsetz).also { mem.add { it.destroy() } }
+                val pxRot = PxQuat(0.0f, 0.0f, 0.0f, 1.0f).also { mem.add { it.destroy() } }
+                boxShape.localPose = PxTransform(pxOffset, pxRot).also { mem.add { it.destroy() } }
             }
             val box = if (dynamic) {
                 Physx.instance.physics.createRigidDynamic(tmpPose)
@@ -84,19 +83,16 @@ class BoxRigidBody(
                 PxRigidBodyExt.updateMassAndInertia(box, 0.1f)
                 box.contactReportThreshold = 0.25f
                 box.maxDepenetrationVelocity = 2.5f
+                box.angularDamping = 0f
+                box.mass = 0.1f
+                //box.massSpaceInertiaTensor = PxVec3(10.0f, 10.0f, 10.0f).also { mem.add { it.destroy() } }
             }
 
             shape = boxShape
             actor = box
-        } catch (e: Throwable) {
-            runCatching {
-                mem.asReversed().forEach { it() }
-            }.onFailure {
-                e.addSuppressed(it)
-            }
-            throw e
+        } finally {
+            mem.asReversed().forEach { it() }
         }
-        mem.asReversed().forEach { it() }
     }
 
     fun destroy() {

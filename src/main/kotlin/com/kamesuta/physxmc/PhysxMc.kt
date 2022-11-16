@@ -119,7 +119,8 @@ class PhysxMc : JavaPlugin(), Listener {
         if (player.inventory.itemInMainHand.type.isAir || !player.inventory.itemInMainHand.type.isBlock) return
 
         val spawnLocation = player.eyeLocation.clone().add(player.eyeLocation.direction)
-        val boxEntity = physicsWorld.addBoxEntity(spawnLocation, player.inventory.itemInMainHand)
+        val size = if (player.inventory.itemInMainHand.type == Material.SPONGE) 7.5f else 1f
+        val boxEntity = physicsWorld.addBoxEntity(spawnLocation, player.inventory.itemInMainHand, size = size)
 
         if (player.inventory.itemInOffHand.type == Material.STICK) {
             val force = player.eyeLocation.direction.clone().multiply(100)
