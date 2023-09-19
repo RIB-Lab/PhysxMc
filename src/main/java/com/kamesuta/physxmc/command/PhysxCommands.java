@@ -11,29 +11,31 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
+import static com.kamesuta.physxmc.command.CommandNames.*;
+
 public class PhysxCommands {
 
     public static void registerCommands() {
-        CommandAPICommand mainCommand = new CommandAPICommand("physxmc")
+        CommandAPICommand mainCommand = new CommandAPICommand(MAIN.get())
                 .withPermission(CommandPermission.OP)
                 .executesPlayer((player, args) -> {
                 });
 
-        CommandAPICommand resetCommand = new CommandAPICommand("reset")
+        CommandAPICommand resetCommand = new CommandAPICommand(RESET.get())
                 .withPermission(CommandPermission.OP)
                 .executesPlayer((player, args) -> {
                     PhysxMc.instance().getGrabTool().forceClear();
                     PhysxMc.instance().getDisplayedBoxHolder().destroyAll();
                 });
 
-        CommandAPICommand debugCommand = new CommandAPICommand("debug")
+        CommandAPICommand debugCommand = new CommandAPICommand(DEBUG.get())
                 .withPermission(CommandPermission.OP)
                 .executesPlayer((player, args) -> {
                     PhysxSetting.setDebugMode(!PhysxSetting.isDebugMode());
                     player.sendMessage("デバッグモードを" + (PhysxSetting.isDebugMode() ? "有効" : "無効") + "にしました");
                 });
 
-        CommandAPICommand densityCommand = new CommandAPICommand("density")
+        CommandAPICommand densityCommand = new CommandAPICommand(DENSITY.get())
                 .withPermission(CommandPermission.OP)
                 .withArguments(new FloatArgument("密度"))
                 .executesPlayer((player, args) -> {
@@ -42,14 +44,14 @@ public class PhysxCommands {
                     player.sendMessage(String.format("既定の密度を%fに設定しました", density));
                 });
 
-        CommandAPICommand updateChunkCommand = new CommandAPICommand("updatechunk")
+        CommandAPICommand updateChunkCommand = new CommandAPICommand(UPDATECHUNKS.get())
                 .withPermission(CommandPermission.OP)
                 .executesPlayer((player, args) -> {
                     PhysxMc.instance().getPhysxWorld().registerChunksToReloadNextSecond(player.getChunk());
                     player.sendMessage("プレイヤーが今いるチャンクをアップデートしました");
                 });
 
-        CommandAPICommand summonTestObjectCommand = new CommandAPICommand("summontestobject")
+        CommandAPICommand summonTestObjectCommand = new CommandAPICommand(SUMMONTESTOBJECT.get())
                 .withPermission(CommandPermission.OP)
                 .withArguments(new FloatArgument("x"))
                 .withArguments(new FloatArgument("y"))
@@ -63,7 +65,7 @@ public class PhysxCommands {
                     player.sendMessage("テストブロックを生成しました");
                 });
 
-        CommandAPICommand gravityCommand = new CommandAPICommand("gravity")
+        CommandAPICommand gravityCommand = new CommandAPICommand(GRAVITY.get())
                 .withPermission(CommandPermission.OP)
                 .withArguments(new FloatArgument("x"))
                 .withArguments(new FloatArgument("y"))
