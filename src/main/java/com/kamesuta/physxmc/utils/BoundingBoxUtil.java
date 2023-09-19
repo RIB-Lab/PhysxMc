@@ -14,7 +14,7 @@ import java.util.Collection;
 /**
  * ブロックの当たり判定を取るためのクラス
  */
-public class BoundingBoxUtil {
+public final class BoundingBoxUtil {
     /**
      * 初期化が完了しているかどうか
      */
@@ -74,6 +74,10 @@ public class BoundingBoxUtil {
      * NMS: CraftVoxelShape.getBoundingBoxes
      */
     private static Method craftVoxelShapeGetBoundingBoxes;
+    
+    private BoundingBoxUtil(){
+        throw new AssertionError();
+    }
 
     /**
      * 必要なリフレクションフィールドを取得

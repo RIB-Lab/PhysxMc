@@ -6,7 +6,7 @@ import lombok.Setter;
 /**
  * 物理演算の設定
  */
-public class PhysxSetting {
+public final class PhysxSetting {
 
     /**
      * 箱を作る時の既定の密度

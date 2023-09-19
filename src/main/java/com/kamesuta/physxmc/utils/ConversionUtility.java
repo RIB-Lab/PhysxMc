@@ -11,7 +11,11 @@ import org.joml.Vector3f;
 /**
  * 変換用のユーティリティクラス
  */
-public class ConversionUtility {
+public final class ConversionUtility {
+    
+    private ConversionUtility(){
+        throw new AssertionError();
+    }
 
     /**
      * クォータニオンをオイラー角に変換

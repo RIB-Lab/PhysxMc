@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Physx世界でのプレイヤーの当たり判定を管理する
  */
-public class PlayerTriggerHolder {
+public final class PlayerTriggerHolder {
 
     /**
      * プレイヤーと当たり判定のマップ

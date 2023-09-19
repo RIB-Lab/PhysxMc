@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * 物理オブジェクトをMinecraft世界で掴めるようにするクラス
  */
-public class GrabTool {
+public final class GrabTool {
 
     private final Map<Player, DisplayedPhysxBox> grabbedPlayerMap = new HashMap<>();
     private final Map<Player, Quaternionf> originalRotationMap = new HashMap<>();

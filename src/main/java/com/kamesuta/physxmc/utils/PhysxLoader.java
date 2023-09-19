@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 
-public class PhysxLoader {
+public final class PhysxLoader {
     /**
      * プラグインのクラスローダー
      */

@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Bukkitのイベントを受信するクラス
  */
-public class EventHandler implements Listener {
+public final class EventHandler implements Listener {
 
     @org.bukkit.event.EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {

@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * ライブラリのコマンドを仮実装するクラス。CommandLib(<a href="https://github.com/TeamKun/CommandLib">...</a>)が1.20に対応し次第移行する
  */
-public class PhysxCommand extends CommandBase implements Listener {
+public final class PhysxCommand extends CommandBase implements Listener {
 
     private static final String commandName = "physxmc";
     private static final String resetArgument = "reset";

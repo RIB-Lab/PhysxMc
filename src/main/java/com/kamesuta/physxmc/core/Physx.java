@@ -8,7 +8,7 @@ import physx.physics.PxPhysics;
 /**
  * Physxのコアコンポーネントのホルダークラス。
  */
-public class Physx {
+public final class Physx {
 
     //PhysX's library version
     private static final int version = PxTopLevelFunctions.getPHYSICS_VERSION();
