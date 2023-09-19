@@ -1,11 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.ajoberstar.grgit.Grgit
 
 plugins {
     // Javaプラグインを適用
     java
     // ShadowJar(依存関係埋め込み)を使用するためのプラグイン
-    id("com.github.johnrengelman.shadow") version "6.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     // Gitに応じた自動バージョニングを行うためのプラグイン
     id("org.ajoberstar.grgit") version "4.1.1"
     id("io.freefair.lombok") version "6.6.1"
@@ -52,6 +51,8 @@ dependencies {
     implementation("org.joml:joml:1.10.5")
 
     compileOnly("org.projectlombok:lombok:1.18.24")
+
+    implementation("dev.jorel:commandapi-bukkit-shade:9.1.0")
 }
 
 tasks {
@@ -86,6 +87,8 @@ tasks {
         archiveClassifier.set("")
         // IncludeLibを埋め込む
         from(includeLibZip)
+
+        relocate("dev.jorel.commandapi", "com.kamesuta.physxmc.commandapi")
     }
 
     // アーティファクトを登録する

@@ -21,8 +21,7 @@ import java.util.List;
  */
 public final class PhysxCommand extends CommandBase implements Listener {
 
-    private static final String commandName = "physxmc";
-    private static final String resetArgument = "reset";
+    private static final String commandName = "deprecated";
     private static final String debugArgument = "debugmode";
     private static final String densityArgument = "density";
     private static final String updateArgument = "updatecurrentchunk";
@@ -33,7 +32,7 @@ public final class PhysxCommand extends CommandBase implements Listener {
     /**
      * 引数のリスト
      */
-    private static final List<String> arguments = List.of(resetArgument, debugArgument, densityArgument, updateArgument, summonArgument, gravityArgument);
+    private static final List<String> arguments = List.of(debugArgument, densityArgument, updateArgument, summonArgument, gravityArgument);
 
     public PhysxCommand() {
         super(commandName, 1, 4, false);
@@ -41,11 +40,7 @@ public final class PhysxCommand extends CommandBase implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, @Nullable String[] arguments) {
-        if (arguments[0].equals(resetArgument)) {
-            PhysxMc.instance().getGrabTool().forceClear();
-            PhysxMc.instance().getDisplayedBoxHolder().destroyAll();
-            return true;
-        } else if (arguments[0].equals(debugArgument)) {
+        if (arguments[0].equals(debugArgument)) {
             PhysxSetting.setDebugMode(!PhysxSetting.isDebugMode());
             sender.sendMessage("デバッグモードを" + (PhysxSetting.isDebugMode() ? "有効" : "無効") + "にしました");
             return true;

@@ -9,6 +9,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.kamesuta.physxmc.command.PhysxCommand;
+import com.kamesuta.physxmc.command.PhysxCommands;
 import com.kamesuta.physxmc.core.Physx;
 import com.kamesuta.physxmc.core.PhysxTerrain;
 import com.kamesuta.physxmc.utils.BoundingBoxUtil;
@@ -19,6 +20,8 @@ import com.kamesuta.physxmc.widget.GrabTool;
 import com.kamesuta.physxmc.widget.PlayerTriggerHolder;
 import com.kamesuta.physxmc.wrapper.DisplayedBoxHolder;
 import com.kamesuta.physxmc.wrapper.IntegratedPhysxWorld;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,12 +47,24 @@ public final class PhysxMc extends JavaPlugin {
     @Getter
     private ProtocolManager protocolManager;
 
+    public PhysxMc(){
+        INSTANCE = this;
+    }
+    
+    @Override
+    public void onLoad() {
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this));
+        PhysxCommands.registerCommands();
+    }
+
     public static PhysxMc instance() {
         return INSTANCE;
     }
     
     @Override
     public void onEnable() {
+        CommandAPI.onEnable();
+        
         try {
             PhysxLoader.loadPhysxOnAppClassloader();
         } catch (Throwable e) {
@@ -119,6 +134,8 @@ public final class PhysxMc extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        CommandAPI.onDisable();
+        
         if (displayedBoxHolder != null) {
             displayedBoxHolder.destroyAll();
             playerTriggerHolder.destroyAll();
