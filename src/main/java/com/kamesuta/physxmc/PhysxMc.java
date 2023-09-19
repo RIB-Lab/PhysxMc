@@ -8,7 +8,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.kamesuta.physxmc.command.PhysxCommand;
 import com.kamesuta.physxmc.command.PhysxCommands;
 import com.kamesuta.physxmc.core.Physx;
 import com.kamesuta.physxmc.core.PhysxTerrain;
@@ -88,7 +87,6 @@ public final class PhysxMc extends JavaPlugin {
             }
         }.runTaskTimer(this, 1, 1);
 
-        getServer().getPluginManager().registerEvents(new PhysxCommand(), this);
         getServer().getPluginManager().registerEvents(new EventHandler(), this);
 
         initProtocolLib();
