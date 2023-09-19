@@ -79,7 +79,7 @@ public class DisplayedBoxHolder {
         }
 
         BoxData data = new BoxData(new PxVec3((float) location.x(), (float) location.y(), (float) location.z()), new PxQuat(quat.x, quat.y, quat.z, quat.w), boxGeometries);
-        DisplayedPhysxBox box = PhysxMc.physxWorld.addBox(data, displayMap);
+        DisplayedPhysxBox box = PhysxMc.instance().getPhysxWorld().addBox(data, displayMap);
         blockDisplayList.add(box);
         return box;
     }
@@ -137,9 +137,9 @@ public class DisplayedBoxHolder {
             displayedPhysxBox.update();
 
             if (!displayedPhysxBox.isSleeping())
-                PhysxMc.physxWorld.registerChunksToLoadNextTick(displayedPhysxBox.getSurroundingChunks());
+                PhysxMc.instance().getPhysxWorld().registerChunksToLoadNextTick(displayedPhysxBox.getSurroundingChunks());
         }
-        PhysxMc.physxWorld.setReadyToUpdateChunks();
+        PhysxMc.instance().getPhysxWorld().setReadyToUpdateChunks();
     }
 
     /**
@@ -156,7 +156,7 @@ public class DisplayedBoxHolder {
                         blockDisplay.remove();
                     }
                 }
-                PhysxMc.physxWorld.removeBox(box);
+                PhysxMc.instance().getPhysxWorld().removeBox(box);
                 return true;
             }
 
@@ -174,7 +174,7 @@ public class DisplayedBoxHolder {
                     blockDisplay.remove();
                 }
             }
-            PhysxMc.physxWorld.removeBox(box);
+            PhysxMc.instance().getPhysxWorld().removeBox(box);
         });
         blockDisplayList.clear();
     }
@@ -188,7 +188,7 @@ public class DisplayedBoxHolder {
                 blockDisplay.remove();
             }
         }
-        PhysxMc.physxWorld.removeBox(box);
+        PhysxMc.instance().getPhysxWorld().removeBox(box);
     }
 
     public boolean hasBox(DisplayedPhysxBox box) {
@@ -232,7 +232,7 @@ public class DisplayedBoxHolder {
      */
     @Nullable
     public DisplayedPhysxBox raycast(Location location, float distance) {
-        PxRigidActor actor = PhysxMc.physxWorld.raycast(location, distance);
+        PxRigidActor actor = PhysxMc.instance().getPhysxWorld().raycast(location, distance);
         if (actor == null)
             return null;
         return blockDisplayList.stream().filter(displayedPhysxBox -> displayedPhysxBox.getActor().equals(actor)).findFirst().orElse(null);

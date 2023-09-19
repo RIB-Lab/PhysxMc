@@ -1,5 +1,6 @@
 package com.kamesuta.physxmc.widget;
 
+import com.kamesuta.physxmc.PhysxMc;
 import com.kamesuta.physxmc.wrapper.DisplayedPhysxBox;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -8,8 +9,6 @@ import org.joml.Quaternionf;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.kamesuta.physxmc.PhysxMc.displayedBoxHolder;
 
 /**
  * 物理オブジェクトをMinecraft世界で掴めるようにするクラス
@@ -30,7 +29,7 @@ public class GrabTool {
      * @return 掴んだかどうか
      */
     public boolean tryGrab(Player player) {
-        DisplayedPhysxBox box = displayedBoxHolder.raycast(player.getEyeLocation(), 10);
+        DisplayedPhysxBox box = PhysxMc.instance().getDisplayedBoxHolder().raycast(player.getEyeLocation(), 10);
         if (box == null || grabbedPlayerMap.containsValue(box)) {
             return false;
         }
@@ -87,7 +86,7 @@ public class GrabTool {
      */
     private void updateGrabbingObjPos() {
         for (Map.Entry<Player, DisplayedPhysxBox> entry : grabbedPlayerMap.entrySet()) {
-            if (!displayedBoxHolder.hasBox(entry.getValue()) || !originalRotationMap.containsKey(entry.getKey())) { //既に他の要因でboxが取り除かれている場合
+            if (!PhysxMc.instance().getDisplayedBoxHolder().hasBox(entry.getValue()) || !originalRotationMap.containsKey(entry.getKey())) { //既に他の要因でboxが取り除かれている場合
                 grabbedPlayerMap.remove(entry.getKey());
                 originalRotationMap.remove(entry.getKey());
                 return;

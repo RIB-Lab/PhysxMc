@@ -17,8 +17,6 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.kamesuta.physxmc.PhysxMc.displayedBoxHolder;
-
 /**
  * Bukkitのイベントを受信するクラス
  */
@@ -31,7 +29,7 @@ public class EventHandler implements Listener {
 
         if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-                DisplayedPhysxBox box = displayedBoxHolder.debugCreate(event.getPlayer());
+                DisplayedPhysxBox box = PhysxMc.instance().getDisplayedBoxHolder().debugCreate(event.getPlayer());
                 if (box != null) {
                     box.throwBox(event.getPlayer().getEyeLocation());
                     return;
@@ -41,18 +39,18 @@ public class EventHandler implements Listener {
                 if(event.getItem() == null && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.DIAMOND_BLOCK){
                     event.setCancelled(true);
                     List<Vector> offsets = scanOffsets(event.getInteractionPoint(), Material.DIAMOND_BLOCK);
-                    displayedBoxHolder.getOffsetMap().put(event.getPlayer(), offsets);
+                    PhysxMc.instance().getDisplayedBoxHolder().getOffsetMap().put(event.getPlayer(), offsets);
                     event.getPlayer().sendMessage("連結する形状を記憶しました");
                 }
             }
         }
         if ((event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
-            if (PhysxMc.grabTool.isGrabbing(event.getPlayer())) {
+            if (PhysxMc.instance().getGrabTool().isGrabbing(event.getPlayer())) {
                 event.setCancelled(true);
-                PhysxMc.grabTool.release(event.getPlayer());
+                PhysxMc.instance().getGrabTool().release(event.getPlayer());
             } else {
                 if (event.getItem() != null && event.getItem().getType() == Material.STICK) {
-                    DisplayedPhysxBox box = displayedBoxHolder.raycast(event.getPlayer().getEyeLocation(), 4);
+                    DisplayedPhysxBox box = PhysxMc.instance().getDisplayedBoxHolder().raycast(event.getPlayer().getEyeLocation(), 4);
                     if (box != null) {
                         box.throwBox(event.getPlayer().getEyeLocation());
                     }
@@ -61,15 +59,15 @@ public class EventHandler implements Listener {
                 }
 
                 if (event.getItem() != null && event.getItem().getType() == Material.FLINT_AND_STEEL) {
-                    DisplayedPhysxBox box = displayedBoxHolder.raycast(event.getPlayer().getEyeLocation(), 4);
+                    DisplayedPhysxBox box = PhysxMc.instance().getDisplayedBoxHolder().raycast(event.getPlayer().getEyeLocation(), 4);
                     if (box != null) {
-                        displayedBoxHolder.destroySpecific(box);
+                        PhysxMc.instance().getDisplayedBoxHolder().destroySpecific(box);
                     }
                     event.setCancelled(true);
                     return;
                 }
 
-                if (PhysxMc.grabTool.tryGrab(event.getPlayer()))
+                if (PhysxMc.instance().getGrabTool().tryGrab(event.getPlayer()))
                     event.setCancelled(true);
             }
         }
@@ -77,12 +75,12 @@ public class EventHandler implements Listener {
 
     @org.bukkit.event.EventHandler
     public void onExplosion(EntityExplodeEvent event) {
-        displayedBoxHolder.executeExplosion(event.getLocation(), 6.9f);
+        PhysxMc.instance().getDisplayedBoxHolder().executeExplosion(event.getLocation(), 6.9f);
     }
 
     @org.bukkit.event.EventHandler
     public void onPlayerLogout(PlayerQuitEvent event) {
-        PhysxMc.grabTool.release(event.getPlayer());
+        PhysxMc.instance().getGrabTool().release(event.getPlayer());
     }
     
     public static List<Vector> scanOffsets(Location location, Material material){

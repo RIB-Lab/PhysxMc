@@ -36,7 +36,7 @@ public class PlayerTriggerHolder {
     public List<BiConsumer<Player, DisplayedPhysxBox>> playerTriggerReceivers = new ArrayList<>();
 
     public PlayerTriggerHolder() {
-        PhysxMc.physxWorld.getSimCallback().triggerReceivers.add(this::onPlayerEnterBox);
+        PhysxMc.instance().getPhysxWorld().getSimCallback().triggerReceivers.add(this::onPlayerEnterBox);
     }
 
     public void update() {
@@ -67,7 +67,7 @@ public class PlayerTriggerHolder {
     private void removeOfflinePlayerTriggerBox() {
         playerCollisionList.forEach((player, physxBox) -> {
             if (!player.isOnline() && physxBox != null) {
-                PhysxMc.physxWorld.removeBox(physxBox);
+                PhysxMc.instance().getPhysxWorld().removeBox(physxBox);
                 playerCollisionList.put(player, null);
             }
         });
@@ -84,7 +84,7 @@ public class PlayerTriggerHolder {
         PxVec3 pos = new PxVec3((float) loc.x(), (float) loc.y() + 0.9f, (float) loc.z());
         PxQuat rot = new PxQuat(PxIDENTITYEnum.PxIdentity);
         PxBoxGeometry geometry = new PxBoxGeometry(0.3f, 0.9f, 0.3f);//Steve is 1.8m tall and has 0.6m width
-        PhysxBox box = PhysxMc.physxWorld.addBox(new BoxData(pos, rot, Map.of(geometry, new PxVec3()), true));
+        PhysxBox box = PhysxMc.instance().getPhysxWorld().addBox(new BoxData(pos, rot, Map.of(geometry, new PxVec3()), true));
         box.getActor().setName(player.getName());
         return box;
     }
@@ -95,7 +95,7 @@ public class PlayerTriggerHolder {
     public void destroyAll() {
         playerCollisionList.forEach((player, physxBox) -> {
             if (physxBox != null)
-                PhysxMc.physxWorld.removeBox(physxBox);
+                PhysxMc.instance().getPhysxWorld().removeBox(physxBox);
         });
         playerCollisionList.clear();
     }
@@ -132,7 +132,7 @@ public class PlayerTriggerHolder {
 
         player = getPlayer(actor1);
         if (player != null) {
-            box = PhysxMc.displayedBoxHolder.getBox(actor2);
+            box = PhysxMc.instance().getDisplayedBoxHolder().getBox(actor2);
             if (box != null) {
                 Player finalPlayer = player;
                 DisplayedPhysxBox finalBox = box;
@@ -142,7 +142,7 @@ public class PlayerTriggerHolder {
 
         player = getPlayer(actor2);
         if (player != null) {
-            box = PhysxMc.displayedBoxHolder.getBox(actor1);
+            box = PhysxMc.instance().getDisplayedBoxHolder().getBox(actor1);
             if (box != null) {
                 Player finalPlayer = player;
                 DisplayedPhysxBox finalBox = box;

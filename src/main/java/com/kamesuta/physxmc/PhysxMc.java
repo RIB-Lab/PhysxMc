@@ -19,6 +19,7 @@ import com.kamesuta.physxmc.widget.GrabTool;
 import com.kamesuta.physxmc.widget.PlayerTriggerHolder;
 import com.kamesuta.physxmc.wrapper.DisplayedBoxHolder;
 import com.kamesuta.physxmc.wrapper.IntegratedPhysxWorld;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,15 +28,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class PhysxMc extends JavaPlugin {
+    private static PhysxMc INSTANCE;
 
-    public static Physx physx;
-    public static IntegratedPhysxWorld physxWorld;
-    public static DisplayedBoxHolder displayedBoxHolder;
-    public static PlayerTriggerHolder playerTriggerHolder;
+    @Getter
+    private Physx physx;
+    @Getter
+    private IntegratedPhysxWorld physxWorld;
+    @Getter
+    private DisplayedBoxHolder displayedBoxHolder;
+    @Getter
+    private PlayerTriggerHolder playerTriggerHolder;
 
-    public static GrabTool grabTool;
-    public ProtocolManager protocolManager;
+    @Getter
+    private GrabTool grabTool;
+    @Getter
+    private ProtocolManager protocolManager;
 
+    public static PhysxMc instance() {
+        return INSTANCE;
+    }
+    
     @Override
     public void onEnable() {
         try {

@@ -42,8 +42,8 @@ public class PhysxCommand extends CommandBase implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, @Nullable String[] arguments) {
         if (arguments[0].equals(resetArgument)) {
-            PhysxMc.grabTool.forceClear();
-            PhysxMc.displayedBoxHolder.destroyAll();
+            PhysxMc.instance().getGrabTool().forceClear();
+            PhysxMc.instance().getDisplayedBoxHolder().destroyAll();
             return true;
         } else if (arguments[0].equals(debugArgument)) {
             PhysxSetting.setDebugMode(!PhysxSetting.isDebugMode());
@@ -67,7 +67,7 @@ public class PhysxCommand extends CommandBase implements Listener {
                 sender.sendMessage("プレイヤーしか実行できません");
                 return true;
             }
-            PhysxMc.physxWorld.registerChunksToReloadNextSecond(((Player) sender).getChunk());
+            PhysxMc.instance().getPhysxWorld().registerChunksToReloadNextSecond(((Player) sender).getChunk());
             sender.sendMessage("プレイヤーが今いるチャンクをアップデートしました");
             return true;
         } else if (arguments[0].equals(summonArgument) && arguments[1] != null && arguments[2] != null && arguments[3] != null) {
@@ -84,7 +84,7 @@ public class PhysxCommand extends CommandBase implements Listener {
                 sendUsage(sender);
                 return true;
             }
-            PhysxMc.displayedBoxHolder.createDisplayedBox(((Player) sender).getLocation(), new Vector(x, y, z), new ItemStack(Material.COMMAND_BLOCK), List.of(new Vector()));
+            PhysxMc.instance().getDisplayedBoxHolder().createDisplayedBox(((Player) sender).getLocation(), new Vector(x, y, z), new ItemStack(Material.COMMAND_BLOCK), List.of(new Vector()));
             sender.sendMessage("テストブロックを生成しました");
             return true;
         } else if (arguments[0].equals(gravityArgument) && arguments[1] != null && arguments[2] != null && arguments[3] != null) {
@@ -97,7 +97,7 @@ public class PhysxCommand extends CommandBase implements Listener {
                 sendUsage(sender);
                 return true;
             }
-            PhysxMc.physxWorld.setGravity(new Vector(x, y, z));
+            PhysxMc.instance().getPhysxWorld().setGravity(new Vector(x, y, z));
             sender.sendMessage("重力を変更しました");
             return true;
         }
